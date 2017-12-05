@@ -1,5 +1,6 @@
 var http = require('http');
 var fs = require('fs');
+var nodemailer = require("nodemailer");
 var cheerio = require('cheerio');
 var request = require('request');
 
@@ -19,7 +20,7 @@ function fetchNoticePage(url) {
             var times = $('#newList .zxdt_time_in').toArray();
             var today = formatDate(new Date());
             newes.forEach(function (el, index) {
-                if($(times[index]).text().indexOf(today)>=0){
+                if ($(times[index]).text().indexOf(today) >= 0) {
                     console.log($(times[index]).text() + '---' + $(el).text());
                 }
             });
@@ -39,4 +40,19 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
-fetchNoticePage(noticeUrl);
+//fetchNoticePage(noticeUrl);
+
+var transporter = nodemailer.createTransport('smtps://news_push:<授权码>@smtp.qq.com');
+var mailOptions = {
+    from: "news_push@qq.com", //发信邮箱
+    to: "1@aipp.vip", //接收者邮箱
+    subject: "邮箱测试", //邮件主题
+    text: "您好！",
+    html: "<h1>这是封测试邮件</h1>"
+};
+transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+        return console.log(error);
+    }
+    console.log('Message sent: ' + info.response);
+});
